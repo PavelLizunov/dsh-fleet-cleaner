@@ -1,0 +1,10 @@
+# dsh-fleet-cleaner bundle patch
+- insert:
+    - id: fleet-cleaner
+      name: dsh-fleet-cleaner
+      config:
+        dryRun: true
+        retentionDays: 14
+        scheduleIntervalHours: 24
+        maxScanItems: 500
+        maxScanTimeMs: 5000

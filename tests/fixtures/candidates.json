@@ -1,0 +1,83 @@
+[
+  {
+    "description": "Fully proven eligible settled one-shot subagent",
+    "header": {
+      "id": "sub-eligible-001",
+      "version": 1,
+      "origin": "subagent",
+      "parentSession": "root-chat-001",
+      "subagentMode": "one-shot",
+      "cwd": "/var/lib/dsh/Project/app"
+    },
+    "settlement": {
+      "status": "settled",
+      "completedAt": 1786000000000,
+      "runAttempt": "att-1"
+    },
+    "lastDurableActivityAt": 1786000000000,
+    "receipt": {
+      "receiptId": "rcpt-001",
+      "childSessionId": "sub-eligible-001",
+      "runAttempt": "att-1"
+    },
+    "references": {
+      "runningDescendantsCount": 0,
+      "hasActiveContinuation": false,
+      "hasPendingRetry": false,
+      "activeReadersCount": 0,
+      "activeWritersCount": 0
+    },
+    "openInUI": false
+  },
+  {
+    "description": "Legacy version 0 candidate (unsupported by policy)",
+    "header": {
+      "id": "legacy-001",
+      "version": 0,
+      "cwd": "/var/lib/dsh/Project/app"
+    },
+    "settlement": {
+      "status": "settled",
+      "completedAt": 1786000000000
+    },
+    "lastDurableActivityAt": 1786000000000,
+    "receipt": {
+      "receiptId": "rcpt-legacy",
+      "childSessionId": "legacy-001"
+    },
+    "references": {
+      "runningDescendantsCount": 0,
+      "hasActiveContinuation": false,
+      "hasPendingRetry": false,
+      "activeReadersCount": 0,
+      "activeWritersCount": 0
+    },
+    "openInUI": false
+  },
+  {
+    "description": "Root user chat without subagent origin",
+    "header": {
+      "id": "root-chat-001",
+      "version": 1,
+      "origin": "user",
+      "cwd": "/var/lib/dsh/Project/app"
+    },
+    "settlement": {
+      "status": "settled",
+      "completedAt": 1786000000000
+    },
+    "lastDurableActivityAt": 1786000000000,
+    "receipt": {
+      "receiptId": "rcpt-root",
+      "childSessionId": "root-chat-001"
+    },
+    "references": {
+      "runningDescendantsCount": 0,
+      "hasActiveContinuation": false,
+      "hasPendingRetry": false,
+      "activeReadersCount": 0,
+      "activeWritersCount": 0
+    },
+    "openInUI": false
+  }
+]
