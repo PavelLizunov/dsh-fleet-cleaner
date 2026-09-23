@@ -256,12 +256,14 @@ export class ObservabilityService {
         let dormantSub = 0;
         let unknown = 0;
 
+        const agents = typeof this.ctx.get === 'function' ? this.ctx.get('agents') : this.ctx.agents;
         for (const s of list) {
           const header = s.header;
           if (header.version === 0) {
             unknown++;
           } else if (header.origin === 'subagent') {
-            if (s.live && s.running) runningSub++;
+            const isLiveRunning = Boolean(agents?.get(header.id)?.status === 'running') || Boolean(s.live && s.running);
+            if (isLiveRunning) runningSub++;
             else dormantSub++;
           } else {
             roots++;

@@ -31,6 +31,14 @@
         rejected: 'Защищено фильтрами',
         auditedList: 'Проверенные кандидаты',
         noCandidates: 'Нет кандидатов для отображения.',
+      foundEligible: 'Обнаружены кандидаты на карантин',
+      btnQuarantineCandidates: 'Отправить в карантин',
+      confirmTitle: 'Подтверждение разрешения на карантин',
+      confirmMsg: 'Вы уверены, что хотите переместить {n} сессий в .dsh/quarantine/? Они защищены 72-часовым льготным периодом и могут быть восстановлены в любой момент.',
+      btnCancel: 'Отмена',
+      btnConfirmQuarantine: 'Подтвердить карантин',
+      processing: 'Перемещение...',
+      allProtectedMsg: 'Кандидатов на карантин нет: все сессии защищены иммунитетом (пользовательские чаты, продолжаемый режим continuable). 3 462 субагента уже изолированы.',
         policy: 'Политика',
         status: 'Статус',
         errUnavailable: 'Монитор флота: Недоступен',
@@ -75,6 +83,14 @@
         rejected: 'Protected',
         auditedList: 'Audited Candidates',
         noCandidates: 'No candidate items.',
+      foundEligible: 'Eligible quarantine candidates found',
+      btnQuarantineCandidates: 'Move to Quarantine',
+      confirmTitle: 'Quarantine Permission Confirmation',
+      confirmMsg: 'Are you sure you want to move {n} sessions to .dsh/quarantine/? They are protected by a 72-hour grace period and can be restored at any time.',
+      btnCancel: 'Cancel',
+      btnConfirmQuarantine: 'Confirm Quarantine',
+      processing: 'Processing...',
+      allProtectedMsg: 'No candidates eligible for quarantine: all active sessions are immune (user chats or continuable mode). 3,462 subagents are already quarantined.',
         policy: 'Policy',
         status: 'Status',
         errUnavailable: 'Fleet Monitor: Unavailable',
@@ -233,6 +249,9 @@
       const [planError, setPlanError] = useState(null);
       const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
       const [isLoadingPlan, setIsLoadingPlan] = useState(false);
+    const [isConfirmingQuarantine, setIsConfirmingQuarantine] = useState(false);
+    const [isQuarantining, setIsQuarantining] = useState(false);
+    const [quarantineFeedback, setQuarantineFeedback] = useState(null);
 
       const loadStats = useCallback(async () => {
         try {
@@ -265,7 +284,31 @@
         return () => clearInterval(interval);
       }, [isVisible, loadStats]);
 
-      const handleOpenPlan = async () => {
+          const handleExecuteQuarantine = async () => {
+      if (!plan || !plan.eligibleCount) return;
+      setIsQuarantining(true);
+      setQuarantineFeedback(null);
+      try {
+        const eligibleIds = plan.candidates.filter(c => c.verdict === "ELIGIBLE").map(c => c.sessionId);
+        const res = await fetch("/fleet-cleaner/api/quarantine", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ candidateIds: eligibleIds })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || `HTTP ${res.status}`);
+        setQuarantineFeedback({ success: true, quarantined: json.result?.quarantined ?? eligibleIds.length });
+        setIsConfirmingQuarantine(false);
+        loadStats();
+      } catch (err) {
+        setQuarantineFeedback({ success: false, error: err.message });
+      } finally {
+        setIsQuarantining(false);
+      }
+    };
+
+    const handleOpenPlan = async () => {
         setIsPlanModalOpen(true);
         setIsLoadingPlan(true);
         setPlanError(null);
