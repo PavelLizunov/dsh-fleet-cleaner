@@ -1,0 +1,28 @@
+{
+  "generated": "2026-09-22T19:53:00.000Z",
+  "sections": [
+    {
+      "id": "mockups",
+      "label": "Mockups",
+      "groups": [
+        {
+          "slug": "fleet-cleaner-hud",
+          "files": [
+            { "label": "Fleet Cleaner HUD (i18n & Anti-Slop Layout)", "path": "mockups/fleet-cleaner-hud/index.html" }
+          ]
+        },
+        {
+          "slug": "fleet-cleaner-icons",
+          "files": [
+            { "label": "Vector Icons & Anti-Slop Showcase", "path": "mockups/fleet-cleaner-icons/index.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "design-systems",
+      "label": "Design Systems",
+      "groups": []
+    }
+  ]
+}
