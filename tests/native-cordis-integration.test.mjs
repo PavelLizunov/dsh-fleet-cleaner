@@ -371,7 +371,7 @@ describe('Real DSH Cordis, WebServer & Browser DOM Integration Tests', () => {
       const registration = loadClientModuleRegistration();
       assert.equal(registration.id, 'dsh-fleet-cleaner');
       const clientInstance = registration.factory(() => React);
-      assert.deepEqual(clientInstance.inject, ['betterSidebar']);
+      assert.equal(clientInstance.inject, undefined);
       const tabDisposer = clientInstance.apply(clientCtx);
 
       assert.ok(registeredTabs.has('fleet-cleaner'), 'HUD must be registered as BetterSidebar tab');
@@ -608,7 +608,7 @@ describe('Real DSH Cordis, WebServer & Browser DOM Integration Tests', () => {
     // 2. Client factory execution with valid React
     const clientInstance = registration.factory(() => React);
     assert.equal(typeof clientInstance.apply, 'function');
-    assert.deepEqual(clientInstance.inject, ['betterSidebar']);
+    assert.equal(clientInstance.inject, undefined);
 
     // Apply registers BetterSidebar Tab
     const disposer = clientInstance.apply(mockClientCtx);
