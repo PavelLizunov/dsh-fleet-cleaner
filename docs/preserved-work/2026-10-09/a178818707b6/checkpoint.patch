@@ -1,0 +1,38 @@
+diff --git a/package.json b/package.json
+index e398e4e..9324485 100644
+--- a/package.json
++++ b/package.json
+@@ -14,10 +14,7 @@
+       "patch": "./cordis.patch.yml"
+     },
+     "client": {
+-      "platform": "web",
+-      "inject": [
+-        "dsh-better-sidebar"
+-      ]
++      "platform": "web"
+     }
+   },
+   "scripts": {
+diff --git a/tests/native-cordis-integration.test.mjs b/tests/native-cordis-integration.test.mjs
+index 313bf8d..fe9a2e6 100644
+--- a/tests/native-cordis-integration.test.mjs
++++ b/tests/native-cordis-integration.test.mjs
+@@ -371,7 +371,7 @@ describe('Real DSH Cordis, WebServer & Browser DOM Integration Tests', () => {
+       const registration = loadClientModuleRegistration();
+       assert.equal(registration.id, 'dsh-fleet-cleaner');
+       const clientInstance = registration.factory(() => React);
+-      assert.deepEqual(clientInstance.inject, ['betterSidebar']);
++      assert.equal(clientInstance.inject, undefined);
+       const tabDisposer = clientInstance.apply(clientCtx);
+ 
+       assert.ok(registeredTabs.has('fleet-cleaner'), 'HUD must be registered as BetterSidebar tab');
+@@ -608,7 +608,7 @@ describe('Real DSH Cordis, WebServer & Browser DOM Integration Tests', () => {
+     // 2. Client factory execution with valid React
+     const clientInstance = registration.factory(() => React);
+     assert.equal(typeof clientInstance.apply, 'function');
+-    assert.deepEqual(clientInstance.inject, ['betterSidebar']);
++    assert.equal(clientInstance.inject, undefined);
+ 
+     // Apply registers BetterSidebar Tab
+     const disposer = clientInstance.apply(mockClientCtx);
