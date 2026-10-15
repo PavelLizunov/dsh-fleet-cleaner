@@ -9,6 +9,14 @@ Universal, fail-closed subagent observability and candidate retention planner pl
 - **HUD & Modal Plan View**: Pure React component integrating with DSH BetterSidebar. Fails fast with `TypeError` if React is missing.
 - **Strict Operator Authentication**: Endpoints require verified operator tokens, matching cookies, or authenticated session validation via native DSH `connection.requestRejection`; arbitrary/fictitious bearer tokens are rejected with 401.
 
+## Fleet Monitor in the web GUI
+
+The package name is `dsh-fleet-cleaner`; its native right-sidebar tab is **Fleet Monitor**. In an existing chat, open the right sidebar and select Fleet Monitor from Start (or New tab). No separate Monitor package is needed.
+
+The panel reads the API's `{ ok: true, value }` envelope. It shows user chat sessions, running and non-running subagents, local browser instances across the detected engines, and Node RSS in MiB. Zero is a measured value; unavailable fields display `N/A`. The browser count covers local processes only and is not a count of all remote browser workers. Non-running subagents are not necessarily archived or eligible for retention.
+
+Use **Refresh** for a fresh snapshot and **RU / EN** to change the panel language. **Audit** opens a bounded, read-only retention report: evaluated, eligible, and rejected counts, status/truncation, and per-session verdicts. A partial pass is not an audit of the whole corpus; the report cannot execute quarantine or deletion.
+
 ## Execution Requirements
 - Node.js >= 22.0.0
 - Linux x64 (supports CGroup v2, /proc/meminfo)

@@ -80,9 +80,9 @@
         init: 'Инициализация монитора...',
         chats: 'Чаты (User)',
         active: 'Активные субагенты',
-        dormant: 'В архиве',
+        dormant: 'Неактивные субагенты',
         unknown: 'Неизвестные',
-        browsers: 'Браузеры Neko',
+        browsers: 'Браузеры',
         nodeRss: 'Память Node RSS',
         stale: 'Устарело',
         cached: 'Кэш',
@@ -92,9 +92,9 @@
         errUpdate: 'Ошибка обновления',
         tipChats: 'Корневые сессии пользователей (100% иммунитет)',
         tipActive: 'Активные выполняющиеся субагенты',
-        tipDormant: 'Завершенные субагенты (кандидаты)',
+        tipDormant: 'Субагенты, которые сейчас не выполняются; это не признак доступности для очистки',
         tipUnknown: 'Неизвестные сессии без метаданных',
-        tipBrowsers: 'Изолированные контейнеры браузера Neko',
+        tipBrowsers: 'Локальные экземпляры Neko, Playwright, Chromium и Firefox',
         tipRss: 'Потребление памяти процессом (Node.js RSS)',
         verdicts: {
           REJECTED_NON_SUBAGENT: 'ИММУНИТЕТ',
@@ -112,8 +112,8 @@
         modal: {
           title: 'План удержания и очистки сессий',
           summary: 'Сводка аудита',
-          candidates: 'Кандидаты на очистку',
-          none: 'Кандидаты отсутствуют. Все текущие субагенты защищены политикой.',
+          candidates: 'Проверенные сессии',
+          none: 'В этом проходе нет проверенных сессий.',
           id: 'Идентификатор',
           verdict: 'Вердикт',
           readOnlyNotice: 'Внимание: В Phase 1 удаление выключено (Read-Only аудит).',
@@ -131,7 +131,7 @@
         active: 'Active Subagents',
         dormant: 'Dormant',
         unknown: 'Unknown',
-        browsers: 'Neko Browsers',
+        browsers: 'Browsers',
         nodeRss: 'Node RSS',
         stale: 'Stale',
         cached: 'Cached',
@@ -141,9 +141,9 @@
         errUpdate: 'Update error',
         tipChats: 'User root chat sessions (100% immune from retention)',
         tipActive: 'Active running subagents',
-        tipDormant: 'Completed subagents (retention candidates)',
+        tipDormant: 'Subagents not currently running; this does not establish retention eligibility',
         tipUnknown: 'Unknown session records with missing metadata',
-        tipBrowsers: 'Isolated Neko browser instances',
+        tipBrowsers: 'Local Neko, Playwright, Chromium and Firefox instances',
         tipRss: 'Node.js Resident Set Size (RSS)',
         verdicts: {
           REJECTED_NON_SUBAGENT: 'IMMUNE',
@@ -161,8 +161,8 @@
         modal: {
           title: 'Retention & Quarantine Plan',
           summary: 'Audit Summary',
-          candidates: 'Purge Candidates',
-          none: 'No purge candidates. All subagents are protected by policy.',
+          candidates: 'Evaluated sessions',
+          none: 'No sessions were evaluated in this pass.',
           id: 'Session ID',
           verdict: 'Verdict',
           readOnlyNotice: 'Notice: In Phase 1 mutation is disabled (Read-Only audit).',
@@ -302,7 +302,8 @@
           const res = await fetch(`/fleet-cleaner/api/stats${force ? '?force=true' : ''}`);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
-          setSnapshot(data);
+          if (data.ok !== true || !data.value) throw new Error(data.error || 'Invalid stats response');
+          setSnapshot(data.value);
           setStatsError(null);
         } catch (err) {
           setStatsError(err.message || String(err));
@@ -318,7 +319,8 @@
           const res = await fetch('/fleet-cleaner/api/plan');
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
-          setPlan(data);
+          if (data.ok !== true || !data.value) throw new Error(data.error || 'Invalid plan response');
+          setPlan(data.value);
           setIsPlanModalOpen(true);
         } catch (err) {
           setPlanError(err.message || 'Audit failed');
@@ -500,11 +502,11 @@
           key: 'metrics-grid',
           style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '6px', marginBottom: '10px' }
         }, [
-          renderStatChip('c-chat', IconChat, '#38bdf8', 'rgba(56, 189, 248, 0.12)', t.chats, sessions?.chats, t.tipChats),
-          renderStatChip('c-active', IconSubagent, '#34d399', 'rgba(52, 211, 153, 0.12)', t.active, sessions?.subagentsActive, t.tipActive),
-          renderStatChip('c-dormant', IconArchive, '#fbbf24', 'rgba(251, 191, 36, 0.12)', t.dormant, sessions?.subagentsDormant, t.tipDormant),
-          renderStatChip('c-browser', IconBrowser, '#a78bfa', 'rgba(167, 139, 250, 0.12)', t.browsers, browsers?.total, t.tipBrowsers),
-          renderStatChip('c-rss', IconRam, '#f472b6', 'rgba(244, 114, 182, 0.12)', t.nodeRss, memory?.nodeRssMb ? `${memory.nodeRssMb} MB` : 'N/A', t.tipRss),
+          renderStatChip('c-chat', IconChat, '#38bdf8', 'rgba(56, 189, 248, 0.12)', t.chats, sessions?.userChatSessions, t.tipChats),
+          renderStatChip('c-active', IconSubagent, '#34d399', 'rgba(52, 211, 153, 0.12)', t.active, sessions?.runningSubagents, t.tipActive),
+          renderStatChip('c-dormant', IconArchive, '#fbbf24', 'rgba(251, 191, 36, 0.12)', t.dormant, sessions?.dormantSubagents, t.tipDormant),
+          renderStatChip('c-browser', IconBrowser, '#a78bfa', 'rgba(167, 139, 250, 0.12)', t.browsers, browsers?.totalInstances, t.tipBrowsers),
+          renderStatChip('c-rss', IconRam, '#f472b6', 'rgba(244, 114, 182, 0.12)', t.nodeRss, Number.isFinite(memory?.rssBytes) ? `${(memory.rssBytes / 1024 ** 2).toFixed(1)} MiB` : null, t.tipRss),
         ]),
 
         // Footer Actions
@@ -638,10 +640,12 @@
                 }, [
                   h('div', { key: 'sum-hdr', style: { fontWeight: '600', marginBottom: '6px' } }, t.modal.summary),
                   h('div', { key: 'sum-content', style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', color: 'var(--dsw-alias-label-secondary, #71717a)' } }, [
-                    h('div', { key: 'sc-1' }, `Evaluated: ${plan.summary?.evaluatedCount ?? 0}`),
-                    h('div', { key: 'sc-2' }, `Purge Candidates: ${plan.summary?.candidateCount ?? 0}`),
-                    h('div', { key: 'sc-3' }, `Protected: ${plan.summary?.retainedCount ?? 0}`),
+                    h('div', { key: 'sc-1' }, `Evaluated: ${plan.totalScanned ?? 'N/A'}`),
+                    h('div', { key: 'sc-2' }, `Eligible: ${plan.eligibleCount ?? 'N/A'}`),
+                    h('div', { key: 'sc-3' }, `Retained: ${plan.rejectedCount ?? 'N/A'}`),
                     h('div', { key: 'sc-4' }, `Mode: ${plan.readOnly ? 'Read-Only (Phase 1)' : 'Live'}`),
+                    h('div', { key: 'sc-5' }, `${t.status}: ${plan.status ?? 'N/A'}${plan.truncated ? ' (truncated)' : ''}`),
+                    plan.error ? h('div', { key: 'sc-error' }, plan.error) : null,
                   ])
                 ]),
                 h('div', { key: 'cand-sec' }, [

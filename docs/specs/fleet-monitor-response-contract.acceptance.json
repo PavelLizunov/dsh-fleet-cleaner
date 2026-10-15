@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-10-15T03:02:55.163Z",
+  "consumer": "Existing authenticated DSH GUI",
+  "package": "dsh-fleet-cleaner",
+  "packageVersion": "0.2.0",
+  "tab": "Fleet Monitor",
+  "servedClientRevision": "697c81dc9488",
+  "pageErrors": [],
+  "valuesMatchRefreshResponse": true,
+  "refreshHttpStatus": 200,
+  "measuredValues": {
+    "userChatSessions": 558,
+    "runningSubagents": 0,
+    "dormantSubagents": 2209,
+    "localBrowserInstances": 6,
+    "rssMiB": "3893.6"
+  },
+  "languageSwitches": ["EN", "RU"],
+  "retentionReport": {
+    "httpStatus": 200,
+    "readOnly": true,
+    "applicable": false,
+    "status": "partial",
+    "truncated": true,
+    "totalScanned": 500,
+    "eligibleCount": 0,
+    "rejectedCount": 500,
+    "displayedSummaryMatches": true,
+    "openedAndClosed": true
+  },
+  "serviceRestarted": false,
+  "modelRequestsSubmitted": 0,
+  "secondInstanceInstalled": false,
+  "ownedBrowserClosed": true,
+  "unverified": [
+    "Error and loading variants",
+    "Icon-only modal close",
+    "Mobile layout, contrast and themes",
+    "Sustained polling",
+    "Independent accuracy of existing collectors"
+  ]
+}
